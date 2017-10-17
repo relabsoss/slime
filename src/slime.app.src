@@ -1,0 +1,15 @@
+{application, slime,
+  [
+    {description, "Erlang data transformation/validation library"},
+    {vsn, "git"},
+    {maintainers, []},
+    {licenses, ["MIT"]},
+    {links, [{"Github", "https://github.com/relabsoss/slime"}]},
+    {registered, []},
+    {applications,
+      [
+        kernel,
+        stdlib
+      ]},
+    {env, []}
+]}.
