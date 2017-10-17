@@ -39,30 +39,11 @@ do_validate_properties([], ValidData, #{}, _) ->
 do_validate_properties([], _, Errors, _) ->
   {error, Errors};
 do_validate_properties([{K, Rule}|Rules], ValidData, Errors, Data) when is_function(Rule) ->
-  case get_value(K, Data) of
-    {ok, Value} ->
-      case Rule(Value) of
-        {ok, V} ->
-          do_validate_properties(Rules, ValidData#{ K => V }, Errors, Data);
-        Error ->
-          do_validate_properties(Rules, ValidData, Errors#{ K => Error }, Data)
-      end;
-    {error, Reason} ->
-      do_validate_properties(Rules, ValidData, Errors#{ K => Reason }, Data);
-    Error ->
-      do_validate_properties(Rules, ValidData, Errors#{ K => Error }, Data)
-  end;
-do_validate_properties([{K, SubRules}|Rules], ValidData, Errors, Data) when is_map(SubRules) ->
-  case get_value(K, Data) of
-    {ok, SubData} ->
-      case do_validate_properties(SubRules, SubData) of
-        {ok, SubData2} ->
-          do_validate_properties(Rules, ValidData#{ K => SubData2}, Errors, Data);
-        Error ->
-          do_validate_properties(Rules, ValidData, Errors#{ K => Error }, Data)
-      end;
-    {error, Reason} ->
-      do_validate_properties(Rules, ValidData, Errors#{ K => Reason }, Data);
+  case Rule(get_value(K, Data)) of
+    undefined ->
+      do_validate_properties(Rules, ValidData, Errors, Data);
+    {ok, V} ->
+      do_validate_properties(Rules, ValidData#{ K => V }, Errors, Data);
     Error ->
       do_validate_properties(Rules, ValidData, Errors#{ K => Error }, Data)
   end;
@@ -79,9 +60,9 @@ do_validate_post(Rule, Data) ->
 get_value(K, Data) when is_atom(K) ->
   get_value([K, atom_to_binary(K, utf8), atom_to_list(K)], Data);
 get_value([], _Data) ->
-  {error, undefined};
+  undefined;
 get_value([K|Keys], Data) ->
   case maps:get(K, Data, undefined) of
     undefined -> get_value(Keys, Data);
-    Value -> {ok, Value}
+    Value -> Value
   end.

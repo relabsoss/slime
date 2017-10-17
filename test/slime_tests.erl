@@ -170,13 +170,37 @@ any_test_() ->
   ].
 
 
+optional_test_() ->
+  [
+    ?_assertEqual(
+      {ok, #{fieldA => 1, fieldB => <<"text">>}},
+      slime:validate(
+        #{
+          fieldA => slime_misc:optional(fun slime_misc:integer/1, 1),
+          fieldB => fun slime_misc:binary/1
+        }, #{
+          fieldB => "text"
+        })),
+
+    ?_assertEqual(
+      {ok, #{fieldB => <<"text">>}},
+      slime:validate(
+        #{
+          fieldA => slime_misc:optional(fun slime_misc:integer/1),
+          fieldB => fun slime_misc:binary/1
+        }, #{
+          fieldB => "text"
+        }))
+  ].
+
+
 validate_test_() ->
   [
     ?_assertEqual(
       {ok, #{fieldA => 1, fieldB => <<"text">>}},
       slime:validate(
         #{
-          fieldA => fun slime_misc:integer/1,
+          fieldA => slime_misc:optional(fun slime_misc:integer/1),
           fieldB => fun slime_misc:binary/1
         }, #{
         fieldA => 1,
@@ -200,9 +224,9 @@ validate_test_() ->
         #{
           fieldA => fun slime_misc:integer/1,
           fieldB => fun slime_misc:binary/1,
-          fieldC => #{
+          fieldC => slime_misc:sub(#{
             fieldD => fun slime_misc:float/1
-          }
+          })
         }, #{
         "fieldA" => 1,
         <<"fieldB">> => "text",
@@ -217,8 +241,9 @@ validate_test_() ->
         #{
           fieldA => fun slime_misc:integer/1,
           fieldB => fun slime_misc:binary/1,
-          fieldC => #{
-            fieldD => fun slime_misc:float/1}
+          fieldC => slime_misc:sub(#{
+            fieldD => fun slime_misc:float/1
+          })
         },
         fun
           (#{ fieldA := 1 } = Value) -> {ok, Value};
@@ -238,8 +263,9 @@ validate_test_() ->
         #{
           fieldA => fun slime_misc:integer/1,
           fieldB => fun slime_misc:binary/1,
-          fieldC => #{
-            fieldD => fun slime_misc:float/1}
+          fieldC => slime_misc:sub(#{
+            fieldD => fun slime_misc:float/1
+          })
         },
         fun
           (#{ fieldA := 2 } = Value) -> {ok, Value};
