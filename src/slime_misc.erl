@@ -17,40 +17,38 @@
   string_length/1
 ]).
 
--include("slime.hrl").
 
-
--spec required(rule()) -> rule().
+-spec required(slime:rule()) -> slime:rule().
 required(Rule) ->
   fun(Value) -> required(Rule, Value) end.
 
 
--spec optional(rule()) -> rule().
+-spec optional(slime:rule()) -> slime:rule().
 optional(Rule) ->
   fun(Value) -> do_optional(Rule, Value) end.
 
 
--spec optional(rule(), any()) -> rule().
+-spec optional(slime:rule(), slime:any()) -> slime:rule().
 optional(Rule, Default) ->
   fun(Value) -> do_optional(Rule, Value, Default) end.
 
 
--spec any([rule()]) -> rule().
+-spec any([slime:rule()]) -> slime:rule().
 any(Rules) ->
   fun(Value) -> any(Rules, Value, []) end.
 
 
--spec all([rule()]) -> rule().
+-spec all([slime:rule()]) -> slime:rule().
 all(Rules) ->
   fun(Value) -> all(Rules, Value) end.
 
 
--spec sub(rules()) -> rule().
+-spec sub(slime:rules()) -> slime:rule().
 sub(Rules) ->
   fun(Value) -> sub(Rules, Value) end.
 
 
--spec integer(any()) -> {ok, integer()} | {error, error()}.
+-spec integer(any()) -> {ok, integer()} | {error, slime:error()}.
 integer(undefined) ->
   {error, undefined};
 integer(Value) when is_integer(Value) ->
@@ -67,7 +65,7 @@ integer(Value) ->
   {error, {not_integer, Value}}.
 
 
--spec float(any()) -> {ok, float()} | {error, error()}.
+-spec float(any()) -> {ok, float()} | {error, slime:error()}.
 float(undefined) ->
   {error, undefined};
 float(Value) when is_float(Value) ->
@@ -84,7 +82,7 @@ float(Value) ->
   {error, {not_float, Value}}.
 
 
--spec binary(any()) -> {ok, binary()} | {error, error()}.
+-spec binary(any()) -> {ok, binary()} | {error, slime:error()}.
 binary(undefined) ->
   {error, undefined};
 binary(Value) when is_binary(Value) ->
@@ -95,43 +93,43 @@ binary(Value) ->
   {error, {not_binary, Value}}.
 
 
--spec compare(compare()) -> rule().
+-spec compare(slime:compare()) -> slime:rule().
 compare(Compare) ->
   fun(Value) -> compare(Compare, Value) end.
 
 
--spec length(compare()) -> rule().
+-spec length(slime:compare()) -> slime:rule().
 length(Compare) ->
   fun(Value) -> length(Compare, Value) end.
 
 
--spec string_length(compare()) -> rule().
+-spec string_length(slime:compare()) -> slime:rule().
 string_length(Compare) ->
   fun(Value) -> string_length(Compare, Value) end.
 
 
--spec required(rule(), any() | undefined) -> {ok, any()} | {error, error()}.
+-spec required(slime:rule(), any() | undefined) -> {ok, any()} | {error, slime:error()}.
 required(_Rule, undefined) ->
   {error, undefined};
 required(Rule, Value) ->
   Rule(Value).
 
 
--spec do_optional(rule(), any() | undefined) -> {ok, any()} | {error, error()}.
+-spec do_optional(slime:rule(), any() | undefined) -> {ok, any()} | {error, slime:error()}.
 do_optional(_Rule, undefined) ->
   undefined;
 do_optional(Rule, Value) ->
   Rule(Value).
 
 
--spec do_optional(rule(), any() | undefined, any()) -> {ok, any()} | {error, error()}.
+-spec do_optional(slime:rule(), any() | undefined, any()) -> {ok, any()} | {error, slime:error()}.
 do_optional(Rule, undefined, Default) ->
   Rule(Default);
 do_optional(Rule, Value, _) ->
   Rule(Value).
 
 
--spec any([rule()], any(), [error()]) -> {ok, any()} | {error, [error()]}.
+-spec any([slime:rule()], any(), [slime:error()]) -> {ok, any()} | {error, [slime:error()]}.
 any([], _Value, Errors) ->
   {error, {non_of, Errors}};
 any([Rule|Rules], Value, Errors) ->
@@ -141,7 +139,7 @@ any([Rule|Rules], Value, Errors) ->
   end.
 
 
--spec all([rule()], any()) -> {ok, any()} | {error, error()}.
+-spec all([slime:rule()], any()) -> {ok, any()} | {error, slime:error()}.
 all([], Value) ->
   {ok, Value};
 all([Rule|Rules], Value) ->
@@ -151,12 +149,12 @@ all([Rule|Rules], Value) ->
   end.
 
 
--spec sub(rules(), map()) -> rule().
+-spec sub(slime:rules(), map()) -> slime:rule().
 sub(Rules, Data) ->
   slime:validate(Rules, Data).
 
 
--spec length(compare(), any()) -> {ok, any()} | {error, error()}.
+-spec length(slime:compare(), any()) -> {ok, any()} | {error, slime:error()}.
 length(_, undefined) ->
   {error, undefined};
 length(Compare, Value) when is_binary(Value) ->
@@ -173,7 +171,7 @@ length(_Compare, Value) ->
   {error, {wrong_value, Value}}.
 
 
--spec string_length(compare(), any()) -> {ok, any()} | {error, error()}.
+-spec string_length(slime:compare(), any()) -> {ok, any()} | {error, slime:error()}.
 string_length(_, undefined) ->
   {error, undefined};
 string_length(Compare, Value) when is_binary(Value) ->
@@ -185,7 +183,7 @@ string_length(Compare, Value) ->
   length(Compare, Value).
 
 
--spec compare(compare(), integer()) -> {ok, integer()} | {error, error()}.
+-spec compare(slime:compare(), integer()) -> {ok, integer()} | {error, slime:error()}.
 compare(_, undefined) ->
   {error, undefined};
 compare({eq, V}, Value) ->

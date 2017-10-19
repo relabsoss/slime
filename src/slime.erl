@@ -1,13 +1,44 @@
 -module(slime).
 
+
 -export([
   validate/2
 ]).
 
--include("slime.hrl").
+-export_type([
+  error/0,
+  errors/0,
+  rule/0,
+  property_rules/0,
+  rules/0,
+  data/0,
+  compare/0
+]).
+
+-type error() :: binary() | atom() | {atom(), any()}.
+
+-type errors() ::
+error() |
+{
+  #{atom => error()},
+  error()
+}.
+
+-type rule() :: fun(( any() )-> {ok, any()} | {error, error()}).
+
+-type property_rules() :: #{atom() => rule() | property_rules()}.
+
+-type post_rule() :: fun(( any() )-> {ok, any()} | {error, errors()}).
+
+-type rules() :: {property_rules(), post_rule() | undefined} | property_rules().
+
+-type data() :: proplists:proplist() | map().
+
+-type compare() :: {eq | neq | gt | gte | lt | lte, integer()} | {between, {integer(), integer()}} | {in, [any()]}.
 
 
--spec validate(rules(), data()) -> {ok, map()} | {error, errors()}.
+%% @doc Validate Data with Rules
+-spec validate(Rules :: rules(), Data :: data()) -> {ok, map()} | {error, errors()}.
 validate(PropertyRules, Data) when is_map(PropertyRules) ->
   do_validate({PropertyRules, undefined}, Data);
 validate({PropertyRules, undefined} = Rules, Data) when is_map(PropertyRules) ->
