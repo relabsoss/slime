@@ -80,7 +80,7 @@ validate({
   end
 }, #{
   <<"fieldA">> => 10
-}) == {ok, #{fieldB => 10}.
+}) == { ok, #{ fieldA => 10000 } }.
 ```
 
 ### Transform to record on success validation
@@ -97,7 +97,7 @@ validate({
   end
 }, #{
   <<"fieldA">> => 10
-}) == {ok, #{fieldB => 10}.
+}) == { ok, #recordA{ fieldA = 10 } }.
 ```
 
 ### Sub map validation
