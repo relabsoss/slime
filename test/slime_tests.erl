@@ -279,3 +279,33 @@ validate_test_() ->
         }
       }))
   ].
+
+
+validate_map_test_() ->
+  [
+    ?_assertEqual(
+      {ok, #{fieldA => 1}},
+      slime:validate(#{
+        fieldA => fun slime_misc:integer/1
+      }, #{
+        "fieldA" => 1
+      })),
+
+    ?_assertEqual(
+      {ok, #{fieldB => 1}},
+      slime:validate(#{
+        {fieldA, fieldB} => fun slime_misc:integer/1
+      }, #{
+        "fieldA" => 1
+      })),
+
+    ?_assertEqual(
+      {ok, #{fieldA => 1, fieldC => 1}},
+      slime:validate(#{
+        fieldA => fun slime_misc:integer/1,
+        {fieldB, fieldC} => fun slime_misc:integer/1
+      }, #{
+        "fieldA" => 1,
+        "fieldB" => 1
+      }))
+  ].
