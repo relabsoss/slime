@@ -162,3 +162,4 @@ validate(#{
 * slime_misc:compare/1 - expect compare rule of type compare() as argument.
 * slime_misc:length/1 - check list(), binary() length. erlang:bit_size/1 for binary(), erlang:length/1 for list
 * slime_misc:string_length/1 - check string length. UTF8 strings handled correctly
+* slime_misc:re/1,2 - check value against regular expression. Returns same value or error

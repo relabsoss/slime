@@ -16,7 +16,8 @@
   iso8601_datetimems/1,
   compare/1,
   length/1,
-  string_length/1
+  string_length/1,
+  re/1
 ]).
 
 -include("slime.hrl").
@@ -149,6 +150,15 @@ string_length(Compare) ->
   fun(Value) -> string_length(Compare, Value) end.
 
 
+-spec re(iodata() | re:mp()) -> rule().
+re(RE) -> re(RE, [unicode, caseless]).
+
+
+-spec re(iodata() | re:mp(), [re:compile_option()]) -> rule().
+re(RE, Options) ->
+  fun(Value) -> do_re(Value, RE, Options) end.
+
+
 -spec do_optional(rule(), any() | undefined) -> {ok, any()} | {error, error()}.
 do_optional(_Rule, undefined) ->
   undefined;
@@ -243,3 +253,16 @@ compare(true, Value, _V, _Error) ->
   {ok, Value};
 compare(false, Value, V, Error) ->
   {error, {Error, {Value, V}}}.
+
+
+do_re(Value, MP, Options) ->
+  case re:run(Value, MP, Options) of
+    match ->
+      {ok, Value};
+    {match, _} ->
+      {ok, Value};
+    nomatch ->
+      {error, {nomatch, Value}};
+    {error, Error} ->
+      {error, {wrong_re, Error}}
+  end.

@@ -138,6 +138,19 @@ length_test_() ->
   ].
 
 
+re_test_() ->
+  [
+    ?_assertEqual(
+      {ok, <<"9051231212">>},
+      (slime_misc:re("\\d{10}"))
+        (<<"9051231212">>)),
+    ?_assertEqual(
+      {error, {nomatch, <<"905123121a">>}},
+      (slime_misc:re("^\\d{10}$"))
+      (<<"905123121a">>))
+  ].
+
+
 all_test_() ->
   [
     ?_assertEqual(
